@@ -12,10 +12,12 @@ class List {
 }
 
 class Items{
+    static idCounter = 0;
     constructor(item, price){
         this.item = item;
         this.price = price;
         //add id to item
+        this.id = Items.idCounter++;
     }
 }
 
@@ -59,8 +61,9 @@ class ListService {
 class DOMManager {
     static lists;
 
-    static getAllLists(){
-        ListService.getAllLists().then(lists => this.render(lists));
+    static getAllLists(){ 
+         ListService.getAllLists().then(lists => this.render(lists));
+        
     }
     static deleteList(id){
         ListService.deleteList(id)
@@ -96,9 +99,9 @@ class DOMManager {
 
     static deleteItem(listId, itemId){
         for (let list of this.lists){
-            console.log(list)
+            // console.log(list)
             if(list.id == listId){
-                console.log(list.id, listId, "Matching? Yes then move on")
+                // console.log(list.id, listId, "Matching? Yes then move on")
                 for (let item of list.listOfAllItems){
                     console.log(item)
                     if (item.id == itemId){ //!not getting itemId
