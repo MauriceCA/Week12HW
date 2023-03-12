@@ -23,7 +23,7 @@ class Items{
 
 //API calls
 //get request
-//console.log
+
 class ListService {
     static url = "https://64092d096ecd4f9e18aa1900.mockapi.io/ShoppingList/";
 
@@ -97,65 +97,77 @@ class DOMManager {
         }
     }
 
-    static deleteItem(listId, itemId){
-        for (let list of this.lists){
-            // console.log(list)
-            if(list.id == listId){
-                // console.log(list.id, listId, "Matching? Yes then move on")
-                for (let item of list.listOfAllItems){
-                    console.log(item)
-                    if (item.id == itemId){ //!not getting itemId
-                        console.log(item.id,'matching?' ,itemId)
-                        list.listOfAllItems.splice(list.listOfAllItems.indexOf(item), 1);
-                        console.log('delete items')
-                        ListService.updateList(list)
-                        .then(() => {
-                            return ListService.getAllLists();
-                        })
-                        .then((lists) => this.render(lists));
-                    }
-                }
-            }
-        }
+    static deleteItem(listId, i){
+        const list = this.lists.find((l) => l.id === listId)
+        console.log(list, i);
+        list.listOfAllItems.splice(i, 1);
+            ListService.updateList(list)
+                .then(() => {
+                    return ListService.getAllLists();
+                })
+                .then((lists) => this.render(lists));
+
     }
 
     static render(lists){
         this.lists = lists;
         $('#app').empty();
         for (let list of lists){
-            console.log(list, 'name of lists')
+            // console.log(list, 'name of lists')
             $('#app').prepend(
-                `<div id="${list.id}" class="card">
-                    <div class="card-header">
-                    <h2>${list.listName}</h2>
-                    <button class="btn btn-dark" onclick="DOMManager.deleteList('${list.id}')">Delete</button>
-                    </div>
-                    <div class="card-body">
-                        <div class="card">
-                            <div class="row">
-                                <div class="col-sm">
-                                    <input type="text" id="${list.id}-item-name" class="form-control" placeholder="Item Name">
+                `
+                <div id="${list.id}" class="card">
+                        <div class="card-header bg-success-subtle">
+                            <div class="d-flex">
+                                <div class="p-2 w-100">
+                                    <h2>${list.listName}</h2>
                                 </div>
-                                <div class="col-sm">
-                                    <input type="text" id="${list.id}-item-price" class="form-control" placeholder="Item Price">
+                                <div class="flex-shrink-1">
+                                    <button class="btn btn-danger" onclick="DOMManager.deleteList('${list.id}')">Delete</button>
                                 </div>
                             </div>
-                            <button id="${list.id}-new-item" onclick="DOMManager.addListItem('${list.id}')" class="btn btn-primary form-control">Add</button>
                         </div>
-                    </div>
-                </div> <br>
+                        <div class="card-body">
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <input type="text" id="${list.id}-item-name" class="form-control" placeholder="Item Name">
+                                    </div>
+                                    <div class="col-sm">
+                                        <input type="text" id="${list.id}-item-price" class="form-control p-2 mb-2" placeholder="Estimated Item Price">
+                                    </div>
+                                </div>
+                                <button id="${list.id}-new-item" onclick="DOMManager.addListItem('${list.id}')" class="btn btn-outline-success form-control">Add</button>
+                            </div>
+                        </div>
+                </div>
+                 <br>
                 `  
                 );
-                for (let item of list.listOfAllItems) {
+
+                list.listOfAllItems.forEach((item, i) => {
                     $(`#${list.id}`).find('.card-body').append(
-                        `<p>
-                        <span id="item-${item.id}"><strong>Item Name: </strong> ${item.item}</span>
-                        <span id="price-${item.id}"><strong>Item Price: </strong> ${item.price}</span>
-                        <button class="btn btn-dark" onclick="DOMManager.deleteItem('${list.id}', '${item.id}')">Delete Item</button>
-                        </p>
+                        `
+                        <div class="d-flex">
+                                <div class="p-2 w-100 mb-3 fs-5" id="bodyOfList">
+                                    <div class="row">
+                                        <div class="col">
+                                            <span id="item-${item.id}"><strong>Item Name: </strong> ${item.item}</span>
+                                        </div>
+                                        <div class="col">
+                                            <span id="price-${item.id}"><strong>Item Price: </strong> ${item.price}</span>                              
+                                        </div>
+                                    </div>
+
+                                    
+                                </div>
+                                <div class="flex-shrink-1">
+                                    <button class="btn btn-danger mb-3" onclick="DOMManager.deleteItem('${list.id}', ${i})">Delete Item</button>
+                                </div>
+                        </div>
                         `
                     )
-                }
+                })
         }
    }
  }
@@ -166,3 +178,5 @@ $('#create-new-list').on('click', () => {
 });
 
 DOMManager.getAllLists();
+// </div>
+// <div class="col d-flex justify-content-end">
