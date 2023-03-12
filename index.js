@@ -23,7 +23,6 @@ class Items{
 
 //API calls
 //get request
-
 class ListService {
     static url = "https://64092d096ecd4f9e18aa1900.mockapi.io/ShoppingList/";
 
@@ -40,7 +39,6 @@ class ListService {
     }
 
     static updateList(list){
-
             return $.ajax({
             url: this.url + `/${list.id}`,
             dataType: 'json',
@@ -50,7 +48,7 @@ class ListService {
         });
     }
 
-    static deleteList(id){ //not getting the id
+    static deleteList(id){ 
         return $.ajax({
             url: this.url + `/${id}`,
             type: 'DELETE'
@@ -63,8 +61,8 @@ class DOMManager {
 
     static getAllLists(){ 
          ListService.getAllLists().then(lists => this.render(lists));
-        
     }
+
     static deleteList(id){
         ListService.deleteList(id)
         .then(() => {
@@ -83,9 +81,7 @@ class DOMManager {
 
     static addListItem(id){
         for (let list of this.lists){
-            // console.log(list + 'add items stuff')
             if(list.id == id){
-                // console.log(list.id)
                 list.listOfAllItems.push(new Items($(`#${list.id}-item-name`).val(), $(`#${list.id}-item-price`).val()));
                 ListService.updateList(list)
                 .then(() => {
@@ -99,21 +95,18 @@ class DOMManager {
 
     static deleteItem(listId, i){
         const list = this.lists.find((l) => l.id === listId)
-        console.log(list, i);
         list.listOfAllItems.splice(i, 1);
             ListService.updateList(list)
                 .then(() => {
                     return ListService.getAllLists();
                 })
                 .then((lists) => this.render(lists));
-
     }
 
     static render(lists){
         this.lists = lists;
         $('#app').empty();
         for (let list of lists){
-            // console.log(list, 'name of lists')
             $('#app').prepend(
                 `
                 <div id="${list.id}" class="card">
@@ -123,7 +116,7 @@ class DOMManager {
                                     <h2>${list.listName}</h2>
                                 </div>
                                 <div class="flex-shrink-1">
-                                    <button class="btn btn-danger" onclick="DOMManager.deleteList('${list.id}')">Delete</button>
+                                    <button class="btn btn-danger mt-2" onclick="DOMManager.deleteList('${list.id}')">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -149,34 +142,31 @@ class DOMManager {
                     $(`#${list.id}`).find('.card-body').append(
                         `
                         <div class="d-flex">
-                                <div class="p-2 w-100 mb-3 fs-5" id="bodyOfList">
-                                    <div class="row">
+                            <div class="p-2 w-100 mb-3 fs-5" id="bodyOfList">
+                                <div class="row p-2">
                                         <div class="col">
                                             <span id="item-${item.id}"><strong>Item Name: </strong> ${item.item}</span>
                                         </div>
                                         <div class="col">
                                             <span id="price-${item.id}"><strong>Item Price: </strong> ${item.price}</span>                              
                                         </div>
-                                    </div>
-
-                                    
                                 </div>
-                                <div class="flex-shrink-1">
-                                    <button class="btn btn-danger mb-3" onclick="DOMManager.deleteItem('${list.id}', ${i})">Delete Item</button>
-                                </div>
+                            </div>
+                            <div class="flex-shrink-1">
+                                <button class="btn btn-danger mb-3 my-2" onclick="DOMManager.deleteItem('${list.id}', ${i})">Delete Item</button>
+                            </div>    
                         </div>
                         `
                     )
                 })
-        }
+            }
    }
  }
+
 $('#create-new-list').on('click', () => {
-    // console.log('click')
+
     DOMManager.createList($('#new-list-name').val());
     $('#new-list-name').val('');
 });
 
 DOMManager.getAllLists();
-// </div>
-// <div class="col d-flex justify-content-end">
